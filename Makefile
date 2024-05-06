@@ -16,7 +16,7 @@ build:
 run:
 	@if [ -z "$$(docker ps -q -f name=$(CONTAINER))" ]; then \
 		echo "$(CONTAINER) does not exist"; \
-		docker run -d -p 443:443 --name $(CONTAINER) $(IMAGE); \
+		docker run -d -p 8080:80 --name $(CONTAINER) $(IMAGE); \
 	else \
 		echo "$(CONTAINER) already exists"; \
 	fi

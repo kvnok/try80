@@ -1,24 +1,20 @@
-# Use the official Debian image
+# Use the Debian Bullseye image from Docker Hub
 FROM debian:bullseye
 
-# Install NGINX and OpenSSL
-RUN apt-get update && apt-get install -y nginx openssl
+# Install NGINX
+RUN apt-get update && apt-get install -y nginx
 
-# Create SSL/TLS certificate directory
-RUN mkdir /etc/nginx/ssl
+# Remove the default nginx index page
+RUN rm -f /var/www/html/index.html
 
-# Generate a self-signed SSL/TLS certificate
-RUN openssl req -x509 -nodes -out /etc/nginx/ssl/inception.pem -keyout /etc/nginx/ssl/inception.key \
-    -subj "/C=NL/ST=Noord-Holland/L=Amsterdam/O=42/OU=Codam/CN=kkroon/"
+# Copy the index.html file from your local machine into the container
+COPY index.html /var/www/html/index.html
 
-# Copy your index.html file to the NGINX HTML directory
-COPY index.html /usr/share/nginx/html/
+# Copy the nginx.conf file into the container
+COPY nginx.conf /etc/nginx/nginx.conf
 
-# Copy custom Nginx configuration for HTTPS
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Expose port 80
+EXPOSE 80
 
-# Expose port 443 (HTTPS)
-EXPOSE 443
-
-# Start NGINX when the container starts
+# Start NGINX when the container has provisioned
 CMD ["nginx", "-g", "daemon off;"]
